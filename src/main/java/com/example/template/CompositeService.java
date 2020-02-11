@@ -56,7 +56,7 @@ public class CompositeService {
                     return productInformation;
                 });
 
-                // Call product Service API ( HATEOAS API 호출 )
+                // Call delivery Service API ( HATEOAS API 호출 )
                 CompletableFuture<Delivery> deliveryInfoCF = CompletableFuture.supplyAsync(() -> {
                     String deliveryUrlDetail = order.get_links().get("delivery").getAsJsonObject().get("href").getAsString();
                     String deliveryUrl = deliveryURL + deliveryUrlDetail;
@@ -64,12 +64,21 @@ public class CompositeService {
                     JsonObject deliveryJsonObject = parser.parse(deliveryListObject).getAsJsonObject();
                     JsonArray deliveryListJsonArray = ((JsonObject)deliveryJsonObject.get("_embedded")).getAsJsonArray("deliveries");
                     Delivery deliveryInformation = new Gson().fromJson(deliveryListJsonArray.get(0), Delivery.class);
+
+                    // 서비스의 장애 전파 확인 .thread.sleep
+//                    try {
+//                        Thread.sleep(500);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+
                     return deliveryInformation;
                 });
 
                 // 모든 작업이 끝나기를 기다린다.
                 CompletableFuture.allOf(productInfoCF, deliveryInfoCF).join();
                 try {
+                    // 데이터를 조합한다
                     OrderInfo orderInfo = new OrderInfo(order, productInfoCF.get(), deliveryInfoCF.get());
                     orderInfoList.add(orderInfo);
                 } catch (InterruptedException e) {
