@@ -12,7 +12,7 @@ public class CompositeController {
     @Autowired
     CompositeService compositeService;
 
-    @GetMapping("/orders/{customerId}")
+    @GetMapping("/composite/orders/{customerId}")
     List<OrderInfo> getOrderByCustomerId(@PathVariable(value = "customerId") String customerId) throws ExecutionException, InterruptedException {
         return  this.compositeService.getOrderByCustomerId(customerId);
     }
