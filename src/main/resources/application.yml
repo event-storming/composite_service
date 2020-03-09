@@ -38,3 +38,9 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+api:
+  url:
+    delivery: http://delivery:8080
+    product: http://products:8080
+    order: http://orders:8080
